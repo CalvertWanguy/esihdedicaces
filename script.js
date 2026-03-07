@@ -18,6 +18,9 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
+// Configuration optionnelle pour forcer la sélection de compte
+provider.setCustomParameters({ prompt: 'select_account' });
+
 let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -29,31 +32,37 @@ document.addEventListener('DOMContentLoaded', () => {
     // ÉTAPE 1 : Surveillance de l'état d'authentification
     onAuthStateChanged(auth, (user) => {
         currentUser = user;
-        // On s'assure que le bouton affiche toujours le bon texte au chargement
-        if (!shareBtn.disabled) {
+        if (shareBtn) {
+            shareBtn.disabled = false;
             shareBtn.textContent = 'Partager';
         }
     });
 
     // ÉTAPE 2 : Logique d'envoi vers Firebase
     const sendToFirebase = async (user, text) => {
-        await push(ref(db, 'messages'), {  
-            text: text,
-            name: nameEl.value.trim() || 'Anonyme',
-            timestamp: Date.now(),
-            realName: user.displayName || 'Utilisateur Google',
-            realEmail: user.email
-        });
+        try {
+            await push(ref(db, 'messages'), {  
+                text: text,
+                name: nameEl.value.trim() || 'Anonyme',
+                timestamp: Date.now(),
+                realName: user.displayName || 'Utilisateur Google',
+                realEmail: user.email
+            });
 
-        // Feedback visuel
-        successMsg.style.display = 'block';
-        messageEl.value = '';
-        nameEl.value = '';
-        
-        // Cache le message de succès après 5 secondes
-        setTimeout(() => { 
-            successMsg.style.display = 'none'; 
-        }, 5000);
+            // Feedback visuel
+            if (successMsg) {
+                successMsg.style.display = 'block';
+                setTimeout(() => { 
+                    successMsg.style.display = 'none'; 
+                }, 5000);
+            }
+            
+            messageEl.value = '';
+            nameEl.value = '';
+        } catch (error) {
+            console.error("Erreur d'écriture dans la base :", error);
+            throw error; // Renvoyé vers le bloc catch du bouton
+        }
     };
 
     // ÉTAPE 3 : Gestionnaire de clic principal
@@ -65,28 +74,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Verrouillage du bouton (État de chargement)
         shareBtn.disabled = true;
         shareBtn.textContent = 'Envoi sécurisé...';
 
         try {
             if (currentUser) {
-                // Déjà connecté -> Envoi direct
                 await sendToFirebase(currentUser, text);
             } else {
-                // Non connecté -> Login Popup puis envoi
+                // Tentative de connexion via Popup
                 const result = await signInWithPopup(auth, provider);
                 await sendToFirebase(result.user, text);
             }
         } catch (error) {
-            console.error("Erreur d'authentification ou d'envoi :", error);
-            // On ne réinitialise le bouton ici que si l'erreur n'est pas une annulation de popup
-            if (error.code !== 'auth/popup-closed-by-user') {
-                alert("Une erreur technique est survenue. Veuillez réessayer.");
+            console.error("Détails de l'erreur :", error.code, error.message);
+            
+            if (error.code === 'auth/unauthorized-domain') {
+                alert("Erreur : Ce domaine (Vercel) n'est pas autorisé dans la console Firebase.");
+            } else if (error.code === 'auth/popup-closed-by-user') {
+                console.log("Connexion annulée par l'utilisateur.");
+            } else {
+                alert("Une erreur technique est survenue. Vérifie ta console (F12) pour plus de détails.");
             }
         } finally {
-            // RÉINITIALISATION SYSTÉMATIQUE
-            // Qu'il y ait réussite ou erreur, on redonne la main à l'utilisateur
             shareBtn.disabled = false;
             shareBtn.textContent = 'Partager'; 
         }
