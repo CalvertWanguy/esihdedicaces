@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dédicaces Anonymes - ESIH</title>
+    <link
+      rel="icon"
+      type="image/png"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>"
+    />
+    <style>
+      :root {
+        --accent: #6366f1;
+        --accent-glow: rgba(99, 102, 241, 0.4);
+        --bg: #0f172a;
+        --card-bg: rgba(30, 41, 59, 0.7);
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+        --border-light: rgba(255, 255, 255, 0.08);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: radial-gradient(circle at top left, #1e1b4b, #0f172a);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        overflow-x: hidden;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 520px;
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: clamp(25px, 6vh, 40px);
+      }
+
+      header h1 {
+        font-size: clamp(2rem, 9vw, 2.8rem);
+        font-weight: 800;
+        letter-spacing: -0.05em;
+        background: linear-gradient(to bottom, #ffffff, #94a3b8);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 8px;
+      }
+
+      header p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+      }
+
+      .form-card {
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border-light);
+        border-radius: clamp(24px, 5vw, 32px);
+        padding: clamp(24px, 6vw, 38px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 160px;
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 22px;
+        color: white;
+        font-size: 1rem;
+        font-family: inherit;
+        line-height: 1.6;
+        resize: none;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: rgba(15, 23, 42, 0.6);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+      }
+
+      /* BLOC CONFIDENTIALITÉ PRO */
+      .privacy-box {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 18px;
+        border-radius: 20px;
+        margin-bottom: 25px;
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+      }
+
+      .privacy-icon { 
+        flex-shrink: 0; 
+        width: 20px; 
+        height: 20px; 
+        color: var(--accent);
+        margin-top: 2px;
+      }
+
+      .privacy-content strong {
+        color: #ffffff;
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        letter-spacing: 0.02em;
+      }
+
+      .privacy-content p { 
+        font-size: 0.8rem; 
+        line-height: 1.4; 
+        color: var(--text-muted); 
+      }
+
+      .input-row {
+        display: flex;
+        gap: 12px;
+      }
+
+      input[type="text"] {
+        flex: 1.5;
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 18px 22px;
+        border-radius: 18px;
+        color: white;
+        font-size: 1rem;
+        transition: 0.3s;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+
+      button {
+        flex: 1;
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 18px;
+        border-radius: 18px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 15px -3px var(--accent-glow);
+      }
+
+      button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+      }
+
+      button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      /* SPINNER */
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: none;
+      }
+
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      .success-anim {
+        display: none;
+        margin-top: 20px;
+        text-align: center;
+        color: #4ade80;
+        font-weight: 600;
+        font-size: 0.95rem;
+        animation: fadeIn 0.4s ease;
+      }
+
+      footer {
+        margin-top: 40px;
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* RESPONSIVITÉ MOBILE */
+      @media (max-width: 500px) {
+        .form-card { padding: 22px; }
+        .input-row { flex-direction: column; }
+        input[type="text"], button { width: 100%; flex: none; }
+        header h1 { font-size: 2.2rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Dédicaces 2.0</h1>
+        <p>L'espace d'expression libre des étudiants</p>
+      </header>
+
+      <div class="form-card">
+        <textarea id="message" placeholder="Que souhaitez-vous partager ?" maxlength="500"></textarea>
+
+        <div class="privacy-box">
+          <svg class="privacy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+          <div class="privacy-content">
+            <strong>Anonymat Garanti</strong>
+            <p>Protection anti-spam via Google. Votre identité réelle <b>ne sera jamais publiée</b>.</p>
+          </div>
+        </div>
+
+        <div class="input-row">
+          <input type="text" id="name" placeholder="Pseudo (optionnel)" />
+          <button id="shareBtn">
+            <span class="spinner" id="loader"></span>
+            <span id="btnText">Partager</span>
+          </button>
+        </div>
+
+        <div id="successMsg" class="success-anim">
+          ✅ Message publié avec succès.
+        </div>
+      </div>
+
+      <footer>
+        Propulsé par <a href="https://wanguycalvert.netlify.app/" target="_blank" style="color:var(--accent); text-decoration:none; font-weight:600;">C.W</a> • ESIH 2026
+      </footer>
+    </div>
+
+    <script type="module">
+        // Le script.js externe s'occupera de la logique Firebase
+        // Assure-toi que script.js utilise bien loader.style.display = 'inline-block' 
+        // et attend 2.5s avant l'envoi.
+    </script>
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin HQ - Dédicaces ESIH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #020617;
+        --card: rgba(30, 41, 59, 0.5);
+        --accent: #6366f1;
+        --accent-glow: rgba(99, 102, 241, 0.3);
+        --danger: #ef4444;
+        --text-dim: #94a3b8;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg);
+        background-image: 
+          radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+          radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
+        color: #f8fafc;
+        min-height: 100vh;
+        padding: 40px 20px;
+      }
+
+      .container { 
+        max-width: 700px; 
+        margin: 0 auto; 
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 50px;
+        animation: fadeIn 0.8s ease;
+      }
+
+      h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+      }
+
+      .stat-card {
+        background: var(--card);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 24px;
+        text-align: center;
+      }
+
+      .stat-card span { display: block; color: var(--text-dim); font-size: 0.8rem; margin-bottom: 5px; }
+      .stat-card strong { font-size: 1.5rem; color: var(--accent); }
+
+      .admin-btn {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 10px 20px var(--accent-glow);
+        transition: 0.3s;
+      }
+
+      .admin-btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
+
+      .message-card {
+        background: var(--card);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 28px;
+        padding: 30px;
+        margin-bottom: 25px;
+        position: relative;
+        overflow: hidden;
+        transition: 0.3s;
+        animation: slideIn 0.5s ease-out forwards;
+        width: 100%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      .message-text {
+        font-size: 1.15rem;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        color: #e2e8f0;
+        white-space: pre-wrap;
+      }
+
+      /* NOUVEAU STYLE : Signature à droite */
+      .message-signature {
+        display: block;
+        text-align: right;
+        font-style: italic;
+        font-size: 1rem;
+        color: var(--accent);
+        margin-bottom: 25px;
+        opacity: 0.9;
+        font-weight: 600;
+      }
+
+      .message-signature::before {
+        content: "— ";
+      }
+
+      .meta-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .user-badge {
+        display: flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 6px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .identity-info {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+      }
+
+      .timestamp { font-size: 0.8rem; color: var(--text-dim); opacity: 0.6; }
+
+      .no-access {
+        text-align: center;
+        padding: 100px 20px;
+        color: var(--text-dim);
+      }
+
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+      @media (max-width: 600px) {
+        .meta-footer { flex-direction: column; align-items: flex-start; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Control <span style="color: var(--accent)">Center</span></h1>
+        <button class="admin-btn" id="lockBtn" onclick="togglePass()">Unlock Access 🔓</button>
+      </div>
+
+      <div class="stats-grid" id="statsContainer" style="display: none;">
+        <div class="stat-card">
+          <span>Total Dédicaces</span>
+          <strong id="totalCount">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>Dernière Activité</span>
+          <strong id="lastDate" style="font-size: 1rem;">--/--</strong>
+        </div>
+      </div>
+
+      <div id="messages" class="messages">
+        <div class="no-access">
+          <p>⚠️ Connexion sécurisée requise pour accéder aux serveurs.</p>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      const firebaseConfig = {
+        apiKey: "AIzaSyAJbmjvW5cHR_lMu4RKHPnl9IRYKI3oPtI",
+        authDomain: "dedicaces-anonymes-esih.firebaseapp.com",
+        projectId: "dedicaces-anonymes-esih",
+        storageBucket: "dedicaces-anonymes-esih.firebasestorage.app",
+        messagingSenderId: "715611579183",
+        appId: "1:715611579183:web:126cc0b8d50f95dbe0b7da",
+        measurementId: "G-5Z0H4K9PR1",
+      };
+
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+      import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
+
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+
+      window.togglePass = function () {
+        document.getElementById("lockBtn").style.display = "none";
+        document.getElementById("statsContainer").style.display = "grid";
+        loadMessages();
+      };
+
+      function loadMessages() {
+        const messagesRef = ref(db, "messages");
+
+        onValue(messagesRef, (snapshot) => {
+          const data = snapshot.val();
+          const msgsEl = document.getElementById("messages");
+          
+          if (!data) {
+            msgsEl.innerHTML = '<div class="no-access">Base de données vide.</div>';
+            return;
+          }
+
+          const messages = Object.entries(data)
+            .map(([key, msg]) => ({ id: key, ...msg }))
+            .sort((a, b) => b.timestamp - a.timestamp);
+
+          document.getElementById("totalCount").textContent = messages.length;
+          document.getElementById("lastDate").textContent = new Date(messages[0]?.timestamp).toLocaleDateString('fr-FR');
+
+          msgsEl.innerHTML = messages.map((msg, index) => `
+            <div class="message-card" style="animation-delay: ${index * 0.1}s">
+              <div class="message-text">${msg.text || ""}</div>
+              
+              <div class="message-signature">${msg.name || "Anonyme"}</div>
+              
+              <div class="meta-footer">
+                <div class="user-badge">
+                  <div class="identity-info">
+                    <span style="word-break: break-all;">
+                      🕵️ ${msg.realName} • ${msg.realEmail}
+                    </span>
+                  </div>
+                </div>
+                <div class="timestamp">
+                  ${new Date(msg.timestamp).toLocaleString("fr-FR", {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})}
+                </div>
+              </div>
+            </div>
+          `).join("");
+        });
+      }
+    </script>
+  </body>
+</html>
